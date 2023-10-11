@@ -1,4 +1,5 @@
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+from cryptography.hazmat.primitives import constant_time
 import base64
 
 
@@ -45,6 +46,28 @@ def scryptDeriveKeyModular(key: bytes, salt: bytes, derived_key_length: int = 32
                           f"{base64.b32encode(scrypt_derived_key).decode().lower()}"
 
     return modular_digest.replace("=", "")  # remove the equals signs because they're not in the [a-zA-Z0-9./] regex
+
+
+def parseModularCryptParams(modular_crypt_derived_key: str) -> dict:
+    assert modular_crypt_derived_key.startswith("sDKM$")
+    key_split = modular_crypt_derived_key.split("$")
+
+    params: dict = {
+        "length": int(key_split[1]),
+        "salt": key_split[2],
+        "digest": key_split[3]
+    }
+    return params
+
+
+def verifyModularCryptDigest(modular_digest: str, key: bytes):
+    params = parseModularCryptParams(modular_digest)
+    derived_key = scryptDeriveKeyModular(
+        key=key,
+        salt=base64.b32decode(params.get("salt").upper()+"===="),
+        derived_key_length=params.get("length"),
+    )
+    return constant_time.bytes_eq(modular_digest.encode("utf-8"), derived_key.encode("utf-8"))
 
 
 def chachaEncryptData():
