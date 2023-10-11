@@ -1,6 +1,5 @@
 def main():
-    from projectLibrary.classes.userSession import getRoomInfo
-    print(getRoomInfo("l-Bcbg1R2GQHubrSnrFPhQ"))
+    pass
 
 
 if __name__ == '__main__':
