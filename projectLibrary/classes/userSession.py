@@ -20,7 +20,7 @@ def getRoomInfo(room_code: str) -> dict:
     return parsed_json_data
 
 
-class userSession:  # TODO: Get messages, stopping write conflicts(maybe complete, idk)
+class userSession:
     def __init__(self, room_code: str, edit_code: str):
         self.room_code: str = room_code
         self.edit_code: str = edit_code
@@ -60,7 +60,7 @@ class userSession:  # TODO: Get messages, stopping write conflicts(maybe complet
             text=self.get_raw_contents() + self.encrypt_message(message) + "\n-"
         )
 
-    def getDecryptedRoomMessages(self) -> list:  # TODO: Finish function
+    def getDecryptedRoomMessages(self) -> list:
         encrypted_messages: list = rentry.raw(self.room_code).get("content").splitlines()[1:-1]
         decrypted_messages: list = []
         for ct in encrypted_messages:
